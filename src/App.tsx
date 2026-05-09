@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { events, inventory, MapLayer, Mender, menders, MendEvent } from "./data";
 
-const token = import.meta.env.MAP || import.meta.env.VITE_MAPBOX_TOKEN;
+const token = import.meta.env.VITE_MAPBOX_TOKEN;
 const mapboxStylePath = "annamakesmapbox/cmoyf4wr2002001s7aavbhqdk";
 
 const londonBounds = {
@@ -144,7 +144,7 @@ export function App() {
           <div className="missing-token">
             <MapPin />
             <h1>Mapbox token missing</h1>
-            <p>Add your Mapbox token to `.env` as `MAP=...` or `VITE_MAPBOX_TOKEN=...`.</p>
+            <p>Add your Mapbox token to `.env` as `VITE_MAPBOX_TOKEN=...`.</p>
           </div>
         )}
         <div className="map-shade" />
