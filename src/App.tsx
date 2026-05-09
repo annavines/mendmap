@@ -8,19 +8,13 @@ import {
   MapPin,
   Shirt,
   Sparkles,
+  Spool,
   X,
 } from "lucide-react";
-import { categories, ClothingCategory, events, inventory, MendEvent } from "./data";
+import { events, inventory, MapLayer, Mender, menders, MendEvent } from "./data";
 
 const token = import.meta.env.MAP || import.meta.env.VITE_MAPBOX_TOKEN;
 const mapboxStylePath = "annamakesmapbox/cmoyf4wr2002001s7aavbhqdk";
-
-const typeClass: Record<MendEvent["type"], string> = {
-  Swap: "type-swap",
-  Repair: "type-repair",
-  Donation: "type-donation",
-  Market: "type-market",
-};
 
 const londonBounds = {
   west: -0.17,
@@ -39,34 +33,57 @@ function markerPosition([longitude, latitude]: MendEvent["coordinates"]) {
   };
 }
 
+type SelectedPlace =
+  | {
+      layer: "second-hand";
+      item: MendEvent;
+    }
+  | {
+      layer: "menders";
+      item: Mender;
+    };
+
 export function App() {
-  const [selectedCategories, setSelectedCategories] = useState<ClothingCategory[]>([]);
-  const [selectedEventId, setSelectedEventId] = useState(events[0].id);
+  const [activeLayers, setActiveLayers] = useState<MapLayer[]>(["second-hand", "menders"]);
+  const [selectedPlaceId, setSelectedPlaceId] = useState(events[0].id);
   const [detailEventId, setDetailEventId] = useState<string | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const staticMapUrl = token
     ? `https://api.mapbox.com/styles/v1/${mapboxStylePath}/static/-0.075,51.512,10.35,0/1280x900?access_token=${token}`
     : "";
 
-  const selectedEvent = events.find((event) => event.id === selectedEventId) ?? events[0];
+  const visiblePlaces: SelectedPlace[] = useMemo(() => {
+    const places: SelectedPlace[] = [];
+
+    if (activeLayers.includes("second-hand")) {
+      places.push(...events.map((item) => ({ layer: "second-hand" as const, item })));
+    }
+
+    if (activeLayers.includes("menders")) {
+      places.push(...menders.map((item) => ({ layer: "menders" as const, item })));
+    }
+
+    return places;
+  }, [activeLayers]);
+
+  const selectedPlace = useMemo(() => {
+    return (
+      visiblePlaces.find((place) => place.item.id === selectedPlaceId) ??
+      visiblePlaces[0]
+    );
+  }, [selectedPlaceId, visiblePlaces]);
+
+  const selectedInventory = useMemo(() => {
+    if (selectedPlace?.layer !== "second-hand") {
+      return [];
+    }
+
+    return inventory.filter((item) => item.eventId === selectedPlace.item.id);
+  }, [selectedPlace]);
+
   const detailEvent = detailEventId
     ? events.find((event) => event.id === detailEventId) ?? null
     : null;
-
-  const filteredEvents = useMemo(() => {
-    if (selectedCategories.length === 0) {
-      return events;
-    }
-
-    return events.filter((event) =>
-      event.lookingFor.some((category) => selectedCategories.includes(category))
-    );
-  }, [selectedCategories]);
-
-  const selectedInventory = useMemo(
-    () => inventory.filter((item) => item.eventId === selectedEvent.id),
-    [selectedEvent.id]
-  );
 
   const detailInventory = useMemo(
     () => inventory.filter((item) => item.eventId === detailEvent?.id),
@@ -74,46 +91,48 @@ export function App() {
   );
 
   useEffect(() => {
-    if (filteredEvents.length === 0) {
-      return;
+    if (!visiblePlaces.some((place) => place.item.id === selectedPlaceId)) {
+      setSelectedPlaceId(visiblePlaces[0]?.item.id ?? "");
     }
+  }, [selectedPlaceId, visiblePlaces]);
 
-    if (!filteredEvents.some((event) => event.id === selectedEventId)) {
-      setSelectedEventId(filteredEvents[0].id);
-    }
-  }, [filteredEvents, selectedEventId]);
+  const visibleInventoryCount = activeLayers.includes("second-hand") ? inventory.length : 0;
+  const visibleRepairSkillCount = activeLayers.includes("menders")
+    ? menders.reduce((total, mender) => total + mender.specialties.length, 0)
+    : 0;
 
-  const toggleCategory = (category: ClothingCategory) => {
-    setSelectedCategories((current) =>
-      current.includes(category)
-        ? current.filter((selected) => selected !== category)
-        : [...current, category]
-    );
+  const toggleLayer = (layer: MapLayer) => {
+    setActiveLayers((current) => {
+      if (current.includes(layer)) {
+        return current.length === 1 ? current : current.filter((item) => item !== layer);
+      }
+
+      return [...current, layer];
+    });
+    setDetailEventId(null);
   };
-
-  const visibleInventoryCount = inventory.filter((item) =>
-    filteredEvents.some((event) => event.id === item.eventId)
-  ).length;
 
   return (
     <main className="app-shell">
-      <section className="map-stage" aria-label="Map of London clothing events">
+      <section className="map-stage" aria-label="Map of London clothing services">
         {token ? (
           <>
             <div
               className="map-image"
               style={{ backgroundImage: `url("${staticMapUrl}")` }}
             />
-            <div className="marker-layer" aria-label="Event markers">
-              {filteredEvents.map((event) => (
+            <div className="marker-layer" aria-label="Map markers">
+              {visiblePlaces.map((place) => (
                 <button
-                  key={event.id}
-                  className={`marker ${event.id === selectedEventId ? "is-active" : ""}`}
-                  style={markerPosition(event.coordinates)}
-                  onClick={() => setSelectedEventId(event.id)}
-                  aria-label={event.name}
+                  key={place.item.id}
+                  className={`marker marker-${place.layer} ${
+                    place.item.id === selectedPlace?.item.id ? "is-active" : ""
+                  }`}
+                  style={markerPosition(place.item.coordinates)}
+                  onClick={() => setSelectedPlaceId(place.item.id)}
+                  aria-label={place.item.name}
                 >
-                  <span>{event.lookingFor.length}</span>
+                  {place.layer === "menders" ? <Spool size={18} /> : <Shirt size={18} />}
                 </button>
               ))}
             </div>
@@ -131,7 +150,7 @@ export function App() {
         <div className="map-shade" />
       </section>
 
-      <aside className="brand-panel" aria-label="Mendmap event filters">
+      <aside className="brand-panel" aria-label="Mendmap filters">
         <div className="brand-lockup">
           <div className="logo-mark">
             <Shirt size={21} />
@@ -144,12 +163,12 @@ export function App() {
 
         <div className="metric-grid">
           <div>
-            <strong>{filteredEvents.length}</strong>
-            <span>events</span>
+            <strong>{visiblePlaces.length}</strong>
+            <span>places</span>
           </div>
           <div>
-            <strong>{visibleInventoryCount}</strong>
-            <span>items</span>
+            <strong>{visibleInventoryCount + visibleRepairSkillCount}</strong>
+            <span>items & skills</span>
           </div>
         </div>
 
@@ -159,57 +178,22 @@ export function App() {
         </button>
 
         <FilterPanel
-          selectedCategories={selectedCategories}
-          onToggle={toggleCategory}
-          onClear={() => setSelectedCategories([])}
+          activeLayers={activeLayers}
+          onToggle={toggleLayer}
         />
       </aside>
 
-      <section className="event-preview" aria-label="Selected event preview">
-        {filteredEvents.length === 0 ? (
-          <EmptyPreview onClear={() => setSelectedCategories([])} />
+      <section className="event-preview" aria-label="Selected map item preview">
+        {!selectedPlace ? (
+          <EmptyPreview />
+        ) : selectedPlace.layer === "menders" ? (
+          <MenderPreview mender={selectedPlace.item} />
         ) : (
-          <>
-            <div className="preview-header">
-              <span className={`event-type ${typeClass[selectedEvent.type]}`}>
-                {selectedEvent.type}
-              </span>
-              <span>{selectedEvent.borough}</span>
-            </div>
-            <h2>{selectedEvent.name}</h2>
-            <p>{selectedEvent.description}</p>
-            <div className="info-stack">
-              <span>
-                <CalendarDays size={16} />
-                {selectedEvent.date}
-              </span>
-              <span>
-                <Clock size={16} />
-                {selectedEvent.time}
-              </span>
-              <span>
-                <MapPin size={16} />
-                {selectedEvent.locationName}
-              </span>
-            </div>
-            <div className="tag-row">
-              {selectedEvent.lookingFor.map((category) => (
-                <span key={category}>{category}</span>
-              ))}
-            </div>
-            <div className="preview-strip">
-              {selectedInventory.slice(0, 3).map((item) => (
-                <img key={item.id} src={item.imageUrl} alt="" />
-              ))}
-              <div>
-                <strong>{selectedInventory.length}</strong>
-                <span>posted items</span>
-              </div>
-            </div>
-            <button className="primary-action" onClick={() => setDetailEventId(selectedEvent.id)}>
-              View event
-            </button>
-          </>
+          <SecondHandPreview
+            event={selectedPlace.item}
+            items={selectedInventory}
+            onViewEvent={() => setDetailEventId(selectedPlace.item.id)}
+          />
         )}
       </section>
 
@@ -220,9 +204,11 @@ export function App() {
               <X size={18} />
             </button>
             <FilterPanel
-              selectedCategories={selectedCategories}
-              onToggle={toggleCategory}
-              onClear={() => setSelectedCategories([])}
+              activeLayers={activeLayers}
+              onToggle={(layer) => {
+                toggleLayer(layer);
+                setFiltersOpen(false);
+              }}
             />
           </div>
         </div>
@@ -240,37 +226,39 @@ export function App() {
 }
 
 function FilterPanel({
-  selectedCategories,
+  activeLayers,
   onToggle,
-  onClear,
 }: {
-  selectedCategories: ClothingCategory[];
-  onToggle: (category: ClothingCategory) => void;
-  onClear: () => void;
+  activeLayers: MapLayer[];
+  onToggle: (layer: MapLayer) => void;
 }) {
+  const filters: Array<{ layer: MapLayer; label: string; icon: "shirt" | "spool" }> = [
+    { layer: "second-hand", label: "Second-hand", icon: "shirt" },
+    { layer: "menders", label: "Menders", icon: "spool" },
+  ];
+
   return (
     <div className="filter-panel">
       <div className="section-title">
         <div>
-          <p className="eyebrow">Looking for</p>
-          <h2>Filter events</h2>
+          <p className="eyebrow">Show me</p>
+          <h2>Filter map</h2>
         </div>
-        {selectedCategories.length > 0 && (
-          <button className="text-button" onClick={onClear}>
-            Clear
-          </button>
-        )}
       </div>
-      <div className="filter-list">
-        {categories.map((category) => {
-          const selected = selectedCategories.includes(category);
+      <div className="filter-list layer-filter-list">
+        {filters.map((filter) => {
+          const selected = activeLayers.includes(filter.layer);
+          const Icon = filter.icon === "spool" ? Spool : Shirt;
+
           return (
             <button
-              key={category}
-              className={`filter-chip ${selected ? "is-selected" : ""}`}
-              onClick={() => onToggle(category)}
+              key={filter.layer}
+              className={`filter-chip layer-chip ${selected ? "is-selected" : ""}`}
+              onClick={() => onToggle(filter.layer)}
+              aria-pressed={selected}
             >
-              <span>{category}</span>
+              <Icon size={16} />
+              <span>{filter.label}</span>
               {selected && <Check size={15} />}
             </button>
           );
@@ -280,15 +268,93 @@ function FilterPanel({
   );
 }
 
-function EmptyPreview({ onClear }: { onClear: () => void }) {
+function SecondHandPreview({
+  event,
+  items,
+  onViewEvent,
+}: {
+  event: MendEvent;
+  items: typeof inventory;
+  onViewEvent: () => void;
+}) {
+  return (
+    <>
+      <div className="preview-header">
+        <span className="event-type type-second-hand">Second-hand</span>
+        <span>{event.borough}</span>
+      </div>
+      <h2>{event.name}</h2>
+      <p>{event.description}</p>
+      <div className="info-stack">
+        <span>
+          <CalendarDays size={16} />
+          {event.date}
+        </span>
+        <span>
+          <Clock size={16} />
+          {event.time}
+        </span>
+        <span>
+          <MapPin size={16} />
+          {event.locationName}
+        </span>
+      </div>
+      <div className="tag-row">
+        <span>Second-hand</span>
+      </div>
+      <div className="preview-strip">
+        {items.slice(0, 3).map((item) => (
+          <img key={item.id} src={item.imageUrl} alt="" />
+        ))}
+        <div>
+          <strong>{items.length}</strong>
+          <span>posted items</span>
+        </div>
+      </div>
+      <button className="primary-action" onClick={onViewEvent}>
+        View event
+      </button>
+    </>
+  );
+}
+
+function MenderPreview({ mender }: { mender: Mender }) {
+  return (
+    <>
+      <div className="preview-header">
+        <span className="event-type type-mender">Mender</span>
+        <span>{mender.borough}</span>
+      </div>
+      <h2>{mender.name}</h2>
+      <p>{mender.description}</p>
+      <div className="info-stack">
+        <span>
+          <Clock size={16} />
+          {mender.availability}
+        </span>
+        <span>
+          <MapPin size={16} />
+          {mender.locationName}
+        </span>
+      </div>
+      <div className="tag-row">
+        {mender.specialties.map((category) => (
+          <span key={category}>{category}</span>
+        ))}
+      </div>
+      <button className="primary-action" onClick={() => undefined}>
+        Contact
+      </button>
+    </>
+  );
+}
+
+function EmptyPreview() {
   return (
     <div className="empty-preview">
       <Sparkles size={26} />
-      <h2>No matching events</h2>
-      <p>Try clearing filters to bring the full London demo set back onto the map.</p>
-      <button className="primary-action" onClick={onClear}>
-        Clear filters
-      </button>
+      <h2>No matching places</h2>
+      <p>Switch filters to bring another London demo layer onto the map.</p>
     </div>
   );
 }
@@ -310,7 +376,7 @@ function EventDetail({
             <ArrowLeft size={18} />
             Map
           </button>
-          <span className={`event-type ${typeClass[event.type]}`}>{event.type}</span>
+          <span className="event-type type-second-hand">Second-hand</span>
           <h2>{event.name}</h2>
           <p>{event.description}</p>
           <div className="detail-meta">
@@ -338,9 +404,7 @@ function EventDetail({
               </div>
             </div>
             <div className="tag-row">
-              {event.lookingFor.map((category) => (
-                <span key={category}>{category}</span>
-              ))}
+              <span>Second-hand</span>
             </div>
           </section>
 

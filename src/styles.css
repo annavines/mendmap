@@ -220,6 +220,17 @@ h1 {
   color: #ffffff;
 }
 
+.layer-filter-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.layer-chip {
+  justify-content: center;
+  min-height: 42px;
+  white-space: nowrap;
+}
+
 .event-preview {
   bottom: 24px;
   display: flex;
@@ -279,6 +290,14 @@ h1 {
 
 .type-market {
   background: #7f5f1f;
+}
+
+.type-second-hand {
+  background: #1e6b55;
+}
+
+.type-mender {
+  background: #315f88;
 }
 
 .info-stack {
@@ -390,15 +409,30 @@ h1 {
   width: 42px;
 }
 
-.marker span {
-  font-size: 0.84rem;
-  font-weight: 900;
+.marker svg {
   transform: rotate(45deg);
 }
 
-.marker.is-active {
+.marker-second-hand.is-active {
   background: #a24b36;
   transform: rotate(-45deg) scale(1.12);
+}
+
+.marker-menders {
+  background: #315f88;
+  border-radius: 999px;
+  height: 48px;
+  transform: none;
+  width: 48px;
+}
+
+.marker-menders svg {
+  transform: none;
+}
+
+.marker-menders.is-active {
+  background: #a24b36;
+  transform: scale(1.12);
 }
 
 .mapbox-credit {

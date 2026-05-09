@@ -10,6 +10,7 @@ export type ClothingCategory =
   | "Knitwear";
 
 export type EventType = "Swap" | "Repair" | "Donation" | "Market";
+export type MapLayer = "second-hand" | "menders";
 
 export type MendEvent = {
   id: string;
@@ -36,17 +37,16 @@ export type ClothingItem = {
   note: string;
 };
 
-export const categories: ClothingCategory[] = [
-  "Coats",
-  "Shoes",
-  "Dresses",
-  "Trousers",
-  "Kidswear",
-  "Accessories",
-  "Workwear",
-  "Sportswear",
-  "Knitwear",
-];
+export type Mender = {
+  id: string;
+  name: string;
+  borough: string;
+  locationName: string;
+  coordinates: [number, number];
+  specialties: ClothingCategory[];
+  description: string;
+  availability: string;
+};
 
 export const events: MendEvent[] = [
   {
@@ -278,5 +278,41 @@ export const inventory: ClothingItem[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=700&q=80",
     note: "Soft rib knit, relaxed sleeves.",
+  },
+];
+
+export const menders: Mender[] = [
+  {
+    id: "thread-house-soho",
+    name: "Thread House Soho",
+    borough: "Westminster",
+    locationName: "Berwick Street Studio",
+    coordinates: [-0.1465, 51.5388],
+    specialties: ["Dresses", "Trousers", "Workwear", "Accessories"],
+    description:
+      "Fast alterations, zip replacements, trouser hems, and careful visible mending for favourite pieces.",
+    availability: "Appointments this week",
+  },
+  {
+    id: "east-end-repair-room",
+    name: "East End Repair Room",
+    borough: "Tower Hamlets",
+    locationName: "Roman Road Workshop",
+    coordinates: [-0.0348, 51.5308],
+    specialties: ["Coats", "Knitwear", "Kidswear"],
+    description:
+      "Outerwear patching, knitwear darning, school uniform fixes, and practical repairs for daily wear.",
+    availability: "Drop-ins Saturday",
+  },
+  {
+    id: "south-loop-stitch",
+    name: "South Loop Stitch",
+    borough: "Lambeth",
+    locationName: "Herne Hill Market",
+    coordinates: [-0.1021, 51.4532],
+    specialties: ["Shoes", "Sportswear", "Trousers", "Coats"],
+    description:
+      "Community repair stall for sports kit, replacement fastenings, basic shoe fixes, and weatherproofing.",
+    availability: "Next clinic tomorrow",
   },
 ];
