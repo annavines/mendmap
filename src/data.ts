@@ -36,6 +36,17 @@ export type ClothingItem = {
   note: string;
 };
 
+export type Mender = {
+  id: string;
+  name: string;
+  borough: string;
+  locationName: string;
+  coordinates: [number, number];
+  specialties: ClothingCategory[];
+  description: string;
+  availability: string;
+};
+
 export const categories: ClothingCategory[] = [
   "High Fashion",
   "Fast Fashion",
@@ -309,7 +320,7 @@ export const menders: Mender[] = [
     borough: "Lambeth",
     locationName: "Herne Hill Market",
     coordinates: [-0.1021, 51.4532],
-    specialties: ["Streetwear", "Sustainable", "Minimalist", "Minimalist"],
+    specialties: ["Streetwear", "Sustainable", "Minimalist", "Fast Fashion"],
     description:
       "Community repair stall for sports kit, replacement fastenings, basic shoe fixes, and weatherproofing.",
     availability: "Next clinic tomorrow",
