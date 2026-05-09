@@ -13,6 +13,7 @@ import {
 import { categories, ClothingCategory, events, inventory, MendEvent } from "./data";
 
 const token = import.meta.env.MAP || import.meta.env.VITE_MAPBOX_TOKEN;
+const mapboxStylePath = "annamakesmapbox/cmoyf4wr2002001s7aavbhqdk";
 
 const typeClass: Record<MendEvent["type"], string> = {
   Swap: "type-swap",
@@ -44,7 +45,7 @@ export function App() {
   const [detailEventId, setDetailEventId] = useState<string | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const staticMapUrl = token
-    ? `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/-0.075,51.512,10.35,0/1280x900?access_token=${token}`
+    ? `https://api.mapbox.com/styles/v1/${mapboxStylePath}/static/-0.075,51.512,10.35,0/1280x900?access_token=${token}`
     : "";
 
   const selectedEvent = events.find((event) => event.id === selectedEventId) ?? events[0];
