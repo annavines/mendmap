@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { events, inventory, MapLayer, Mender, menders, MendEvent } from "./data";
 
-const token = import.meta.env.MAP || import.meta.env.VITE_MAPBOX_TOKEN;
+const token = import.meta.env.VITE_MAPBOX_TOKEN;
 const mapboxStylePath = "annamakesmapbox/cmoyf4wr2002001s7aavbhqdk";
 
 const londonBounds = {
