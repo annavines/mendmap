@@ -1,13 +1,12 @@
 export type ClothingCategory =
-  | "Coats"
-  | "Shoes"
-  | "Dresses"
-  | "Trousers"
-  | "Kidswear"
-  | "Accessories"
-  | "Workwear"
-  | "Sportswear"
-  | "Knitwear";
+  | "High Fashion"
+  | "Fast Fashion"
+  | "Fancy Dress"
+  | "Y2K"
+  | "Vintage"
+  | "Sustainable"
+  | "Streetwear"
+  | "Minimalist";
 
 export type EventType = "Swap" | "Repair" | "Donation" | "Market";
 export type MapLayer = "second-hand" | "menders";
@@ -37,100 +36,100 @@ export type ClothingItem = {
   note: string;
 };
 
-export type Mender = {
-  id: string;
-  name: string;
-  borough: string;
-  locationName: string;
-  coordinates: [number, number];
-  specialties: ClothingCategory[];
-  description: string;
-  availability: string;
-};
+export const categories: ClothingCategory[] = [
+  "High Fashion",
+  "Fast Fashion",
+  "Fancy Dress",
+  "Y2K",
+  "Vintage",
+  "Sustainable",
+  "Streetwear",
+  "Minimalist",
+];
 
 export const events: MendEvent[] = [
   {
     id: "hackney-swap",
-    name: "Hackney Wardrobe Swap",
+    name: "Natural Materials Swap",
     type: "Swap",
     date: "Today",
     time: "14:00-17:00",
     locationName: "Hackney Bridge",
     borough: "Hackney",
     coordinates: [-0.0213, 51.5432],
-    lookingFor: ["Coats", "Kidswear", "Knitwear"],
+    lookingFor: ["Vintage", "Sustainable", "Minimalist"],
     description:
-      "A neighbourhood clothing swap with rails for winter layers, childrenswear, and repairs on site.",
+      "Curated swap celebrating organic fabrics, natural dyes, and sustainable textiles. Focus on linen, wool, cotton, and hemp pieces with timeless appeal.",
     host: "East London Circular",
   },
   {
     id: "brixton-repair",
-    name: "Brixton Mend & Match",
+    name: "Y2K Revival Lab",
     type: "Repair",
     date: "Tomorrow",
     time: "11:30-15:30",
     locationName: "Brixton House",
     borough: "Lambeth",
     coordinates: [-0.1147, 51.4627],
-    lookingFor: ["Dresses", "Trousers", "Accessories"],
+    lookingFor: ["Fancy Dress", "Minimalist", "Y2K"],
     description:
-      "Drop in for zip fixes, hem advice, and a small exchange rail curated by local volunteers.",
+      "Repair and upcycle your Y2K pieces—baby tees, cargo pants, and early 2000s silhouettes. Expert mending plus styling advice and restoration tips.",
     host: "Brixton Remake Club",
   },
   {
     id: "camden-rail",
-    name: "Camden Community Rail",
+    name: "Minimalist Edit Collective",
     type: "Donation",
     date: "Sat 18 May",
     time: "10:00-16:00",
     locationName: "St Pancras Community Association",
     borough: "Camden",
     coordinates: [-0.1327, 51.5416],
-    lookingFor: ["Workwear", "Shoes", "Coats"],
+    lookingFor: ["Sustainable", "Streetwear", "Minimalist"],
     description:
-      "Collecting interview clothing, smart shoes, and outerwear for local referral partners.",
+      "Celebrate refined simplicity with neutral palettes and timeless silhouettes. Perfect basics, clean lines, and capsule-ready pieces for everyday elegance.",
     host: "North London Mutual Aid",
   },
   {
     id: "peckham-market",
-    name: "Peckham Preloved Market",
+    name: "Vintage x Streetwear Fusion",
     type: "Market",
     date: "Sun 19 May",
     time: "12:00-18:00",
     locationName: "Copeland Park",
     borough: "Southwark",
     coordinates: [-0.0677, 51.4695],
-    lookingFor: ["Sportswear", "Dresses", "Accessories"],
+    lookingFor: ["Streetwear", "Fancy Dress", "Y2K"],
     description:
-      "Independent sellers, free rails, and a community table for items people want to rehome quickly.",
+      "Where vintage meets modern street style. Curated selection of retro pieces, contemporary Urban wear, and eclectic finds from independent collectors.",
     host: "Peckham Sustainable Style",
   },
   {
     id: "walthamstow-kids",
-    name: "Walthamstow Little Layers",
+    name: "Sustainable Kids Edit",
     type: "Swap",
     date: "Wed 22 May",
     time: "09:30-12:30",
     locationName: "Crate St James",
     borough: "Waltham Forest",
     coordinates: [-0.0233, 51.5829],
-    lookingFor: ["Kidswear", "Shoes", "Sportswear"],
+    lookingFor: ["Fast Fashion", "Streetwear", "Sustainable"],
     description:
-      "A parent-friendly swap for fast-growing wardrobes, school shoes, and weekend sports kit.",
+      "Eco-conscious children's fashion swap featuring organic, ethically-made pieces. Quality kids clothing that grows with them, swapped with parents who care.",
     host: "Mini Mend Network",
   },
   {
     id: "lewisham-loop",
-    name: "Lewisham Loop Wardrobe",
+    name: "High Fashion Archive",
     type: "Donation",
     date: "Thu 23 May",
     time: "17:00-20:00",
     locationName: "Catford Mews",
     borough: "Lewisham",
     coordinates: [-0.0204, 51.4452],
-    lookingFor: ["Trousers", "Knitwear", "Workwear"],
+    lookingFor: ["Minimalist", "Vintage", "Sustainable"],
     description:
-      "Evening drop-off and browse session focused on work basics, knitwear, and everyday staples.",
+      "Elevated evening event celebrating designer pieces, luxury fabrics, and statement items. Premium contributions create accessible high fashion for all.",
     host: "Lewisham Share Shed",
   },
 ];
@@ -140,144 +139,144 @@ export const inventory: ClothingItem[] = [
     id: "coat-1",
     eventId: "hackney-swap",
     title: "Camel wool coat",
-    category: "Coats",
+    category: "Vintage",
     size: "M",
     condition: "Good",
     imageUrl:
-      "https://images.unsplash.com/photo-1548624313-0396c75e4b1a?auto=format&fit=crop&w=700&q=80",
+      "https://images.unsplash.com/photo-1539533057566-69f90869fc20?auto=format&fit=crop&w=700&q=80",
     note: "Warm, structured, light wear on cuffs.",
   },
   {
     id: "kids-1",
     eventId: "hackney-swap",
     title: "Striped kids jumper",
-    category: "Kidswear",
+    category: "Sustainable",
     size: "Age 5-6",
     condition: "Excellent",
     imageUrl:
-      "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=700&q=80",
-    note: "Soft cotton knit, freshly washed.",
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=700&q=80",
+    note: "Soft organic cotton knit, freshly washed.",
   },
   {
     id: "knit-1",
     eventId: "hackney-swap",
     title: "Chunky green cardigan",
-    category: "Knitwear",
+    category: "Minimalist",
     size: "L",
     condition: "Very good",
     imageUrl:
-      "https://images.unsplash.com/photo-1618932260643-eee4a2f652a6?auto=format&fit=crop&w=700&q=80",
+      "https://images.unsplash.com/photo-1597783299271-ef6b5e0da6d0?auto=format&fit=crop&w=700&q=80",
     note: "Oversized fit with deep pockets.",
   },
   {
     id: "dress-1",
     eventId: "brixton-repair",
     title: "Blue midi dress",
-    category: "Dresses",
+    category: "Fancy Dress",
     size: "10",
     condition: "Needs repair",
     imageUrl:
-      "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=700&q=80",
+      "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?auto=format&fit=crop&w=700&q=80",
     note: "Zip needs replacing, fabric is pristine.",
   },
   {
     id: "trousers-1",
     eventId: "brixton-repair",
     title: "Wide-leg black trousers",
-    category: "Trousers",
+    category: "Minimalist",
     size: "12",
     condition: "Good",
     imageUrl:
-      "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=700&q=80",
+      "https://images.unsplash.com/photo-1506629082632-20d4c0ac2b5e?auto=format&fit=crop&w=700&q=80",
     note: "Hem has been pinned for adjustment.",
   },
   {
     id: "work-1",
     eventId: "camden-rail",
     title: "Navy interview blazer",
-    category: "Workwear",
+    category: "Minimalist",
     size: "S",
     condition: "Excellent",
     imageUrl:
-      "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=700&q=80",
-    note: "Clean, simple cut, suitable for interviews.",
+      "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=700&q=80",
+    note: "Clean, tailored cut, perfect for professional settings.",
   },
   {
     id: "shoes-1",
     eventId: "camden-rail",
     title: "Black leather brogues",
-    category: "Shoes",
+    category: "Streetwear",
     size: "UK 7",
     condition: "Good",
     imageUrl:
-      "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=700&q=80",
-    note: "Polished and ready to wear.",
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=700&q=80",
+    note: "Polished and ready to wear. Classic streetwear essential.",
   },
   {
     id: "sports-1",
     eventId: "peckham-market",
     title: "Running windbreaker",
-    category: "Sportswear",
+    category: "Streetwear",
     size: "M",
     condition: "Very good",
     imageUrl:
-      "https://images.unsplash.com/photo-1556906781-9a412961c28c?auto=format&fit=crop&w=700&q=80",
-    note: "Lightweight, packs into side pocket.",
+      "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=700&q=80",
+    note: "Lightweight, technical fabric. Urban sport aesthetic.",
   },
   {
     id: "acc-1",
     eventId: "peckham-market",
     title: "Patterned silk scarf",
-    category: "Accessories",
+    category: "Y2K",
     size: "One size",
     condition: "Excellent",
     imageUrl:
-      "https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&fit=crop&w=700&q=80",
-    note: "Bright print, no visible marks.",
+      "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=700&q=80",
+    note: "Bright vintage print. Iconic Y2K accessory.",
   },
   {
     id: "kids-2",
     eventId: "walthamstow-kids",
     title: "School raincoat",
-    category: "Kidswear",
+    category: "Fast Fashion",
     size: "Age 7-8",
     condition: "Good",
     imageUrl:
-      "https://images.unsplash.com/photo-1503919545889-aef636e10ad4?auto=format&fit=crop&w=700&q=80",
-    note: "Waterproof with reflective trim.",
+      "https://images.unsplash.com/photo-1551028719-00167b16ebc5?auto=format&fit=crop&w=700&q=80",
+    note: "Waterproof with reflective trim. Durable kids' wear.",
   },
   {
     id: "shoes-2",
     eventId: "walthamstow-kids",
     title: "Junior football boots",
-    category: "Shoes",
+    category: "Streetwear",
     size: "UK 2",
     condition: "Fair",
     imageUrl:
-      "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=700&q=80",
-    note: "Plenty of use left for weekend training.",
+      "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&w=700&q=80",
+    note: "Plenty of use left. Iconic street style piece.",
   },
   {
     id: "work-2",
     eventId: "lewisham-loop",
     title: "Cotton work shirt bundle",
-    category: "Workwear",
+    category: "Minimalist",
     size: "M",
     condition: "Good",
     imageUrl:
-      "https://images.unsplash.com/photo-1603252109303-2751441dd157?auto=format&fit=crop&w=700&q=80",
-    note: "Three shirts, neutral colours.",
+      "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=700&q=80",
+    note: "Timeless basics. Neutral colours for capsule wardrobe.",
   },
   {
     id: "knit-2",
     eventId: "lewisham-loop",
     title: "Cream ribbed jumper",
-    category: "Knitwear",
+    category: "Vintage",
     size: "S",
     condition: "Very good",
     imageUrl:
-      "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=700&q=80",
-    note: "Soft rib knit, relaxed sleeves.",
+      "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=700&q=80",
+    note: "Soft neutral rib knit. Effortlessly elegant.",
   },
 ];
 
@@ -288,7 +287,7 @@ export const menders: Mender[] = [
     borough: "Westminster",
     locationName: "Berwick Street Studio",
     coordinates: [-0.1465, 51.5388],
-    specialties: ["Dresses", "Trousers", "Workwear", "Accessories"],
+    specialties: ["Fancy Dress", "Minimalist", "Vintage", "Y2K"],
     description:
       "Fast alterations, zip replacements, trouser hems, and careful visible mending for favourite pieces.",
     availability: "Appointments this week",
@@ -299,7 +298,7 @@ export const menders: Mender[] = [
     borough: "Tower Hamlets",
     locationName: "Roman Road Workshop",
     coordinates: [-0.0348, 51.5308],
-    specialties: ["Coats", "Knitwear", "Kidswear"],
+    specialties: ["Minimalist", "Vintage", "Sustainable"],
     description:
       "Outerwear patching, knitwear darning, school uniform fixes, and practical repairs for daily wear.",
     availability: "Drop-ins Saturday",
@@ -310,7 +309,7 @@ export const menders: Mender[] = [
     borough: "Lambeth",
     locationName: "Herne Hill Market",
     coordinates: [-0.1021, 51.4532],
-    specialties: ["Shoes", "Sportswear", "Trousers", "Coats"],
+    specialties: ["Streetwear", "Sustainable", "Minimalist", "Minimalist"],
     description:
       "Community repair stall for sports kit, replacement fastenings, basic shoe fixes, and weatherproofing.",
     availability: "Next clinic tomorrow",
